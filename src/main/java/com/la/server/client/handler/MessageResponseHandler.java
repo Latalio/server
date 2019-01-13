@@ -12,9 +12,6 @@ public class MessageResponseHandler extends SimpleChannelInboundHandler<MessageR
     protected void channelRead0(ChannelHandlerContext ctx, MessageResponsePacket messageResponsePacket) {
         String fromUserId = messageResponsePacket.getFromUserId();
         String fromUserName = messageResponsePacket.getFromUserName();
-        NettyClient.out.info(fromUserId + ":" + fromUserName + " -> " + messageResponsePacket
-                .getMessage());
-        MainActivity.out.info(fromUserId + ":" + fromUserName + " -> " + messageResponsePacket
-                .getMessage());
+        MainActivity.out.data(messageResponsePacket.getMessage());
     }
 }

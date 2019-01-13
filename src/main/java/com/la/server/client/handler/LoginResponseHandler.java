@@ -21,10 +21,28 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
         String userId = loginResponsePacket.getUserId();
         String userName = loginResponsePacket.getUserName();
 
-        if (loginResponsePacket.isSuccess()) {
-            NettyClient.out.info("Login succeed. [User ID]: " + userId);
-            MainActivity.out.info("Login succeed. [User ID]: " + userId);
-            SessionManager.bindSession(new Session(userId, userName, "Monitor"), ctx.channel());
+        System.out.println(loginResponsePacket.getType());
+        if (loginResponsePacket.getType().equals("Monitor")) {
+            if (loginResponsePacket.isSuccess()) {
+                NettyClient.out.info("Login succeed. [User ID]: " + userId);
+                MainActivity.out.info("Login succeed. [User ID]: " + userId);
+
+                SessionManager.bindSession(new Session(userId, userName, "Monitor"), ctx.channel());
+
+            } else {
+                NettyClient.out.info("Login failed. [Reason]: " + loginResponsePacket.getReason());
+                MainActivity.out.info("Login failed. [Reason]: " + loginResponsePacket.getReason());
+            }
+        } else if (loginResponsePacket.getType().equals("Sensor")) {
+            System.out.println("Here2");
+            NettyClient.out.info(
+                    "New device login. " +
+                    "[User Name]: " + userName +
+                    "[User ID]: " + userId);
+            MainActivity.out.info(
+                    "New device login. " +
+                            "[User Name]: " + userName +
+                            "[User ID]: " + userId);
 
             String[] index = {"Sensor Info", "-"};
             Object[][] data = {
@@ -38,13 +56,13 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
             defaultTableModel.setDataVector(data, index);
             defaultTableModel.fireTableStructureChanged();
         } else {
-            NettyClient.out.info("Login failed. [Reason]: " + loginResponsePacket.getReason());
-            MainActivity.out.info("Login failed. [Reason]: " + loginResponsePacket.getReason());
+            MainActivity.out.err("(LoginResponseHandler) Device type error!");
         }
+
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        NettyClient.out.info("客户端连接被关闭!");
+        NettyClient.out.info("Client connection closed!");
     }
 }

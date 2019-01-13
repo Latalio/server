@@ -13,6 +13,7 @@ public class LoginResponsePacket extends Packet {
     private String userId;
     private String userName;
     private String reason;
+    private String type;
 
     private boolean success;
 
@@ -24,6 +25,7 @@ public class LoginResponsePacket extends Packet {
     public String getUserId() { return userId; }
     public String getUserName() { return userName; }
     public String getReason() { return reason; }
+    public String getType() { return type; }
 
     public boolean isSuccess() { return success; }
 
@@ -31,6 +33,7 @@ public class LoginResponsePacket extends Packet {
     public void setUserId(String userId) { this.userId = userId; }
     public void setUserName(String userName) { this.userName = userName; }
     public void setReason(String reason) { this.reason = reason; }
+    public void setType(String type) { this.type = type; }
 
     public void setSuccess(boolean success) { this.success = success; }
 

@@ -30,7 +30,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
     private static final int MAX_RETRY = 5;
-    private static final String HOST = "222.20.25.214";
+    //private static final String HOST = "222.20.77.85";
+    private static final String HOST = "193.112.144.64";
+    //
     private static final int PORT = 23333;
     private static LogString logString = new LogString();
 

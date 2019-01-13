@@ -5,11 +5,14 @@ import com.la.server.gui.NBSLStyle;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.text.AttributedCharacterIterator;
+import java.util.Vector;
 
 public class InfoPanel extends JPanel {
     private JLabel infoPanelTitle;
-    private JTextArea infoTextArea;
-    private JPanel xAxisPanel;
+    public JTextArea infoTextArea;
+    private AxisPanel xAxisPanel;
     private JPanel yAxisPanel;
     private JPanel zAxisPanel;
 
@@ -40,10 +43,13 @@ public class InfoPanel extends JPanel {
         this.infoTextArea.setForeground(NBSLStyle.COLOR.TEXT);
         this.add(this.infoTextArea);
 
-        this.xAxisPanel = new JPanel();
+        this.xAxisPanel = new AxisPanel();
         this.xAxisPanel.setBounds(360, 30, 280, 100);
-        this.xAxisPanel.setBackground(Color.BLUE);
+        //this.xAxisPanel.setBackground(Color.BLUE);
+        this.xAxisPanel.updateGrid();
         this.add(this.xAxisPanel);
+
+
 
         this.yAxisPanel = new JPanel();
         this.yAxisPanel.setBounds(360, 130, 280, 100);
@@ -56,4 +62,65 @@ public class InfoPanel extends JPanel {
         this.add(this.zAxisPanel);
 
     }
+
+    private class AxisPanel extends JPanel{
+        private int bias;
+        private Vector<Integer> values = new Vector<Integer>();
+
+        public void paintComponent(Graphics g){
+            super.paintComponent(g);
+            setBackground(Color.yellow); //背景色为黄色
+            drawGrid(g, bias);
+
+        }
+
+        public void drawGrid(Graphics g, int bias) {
+            int i;
+            int[] xarray = {0,45,90,135,180,225,270};
+            int[] yarray = {0,10,20,30,40,50,60,70,80,90,100};
+
+            Polygon p = new Polygon();
+            p.addPoint(280-bias,100);
+            for (i=0;i<values.size();i++) {
+                p.addPoint(280-bias+9*i,values.get(i));
+            }
+            p.addPoint(280, 100);
+            p.addPoint(280-bias,100);
+            g.setColor(Color.BLUE);
+            g.fillPolygon(p);
+
+
+
+
+            for(i=0; i<xarray.length; i++) {
+                g.drawLine(xarray[i]-(bias%45),0,xarray[i]-(bias%45),100);
+            }
+            for(i=0; i<yarray.length; i++) {
+                g.drawLine(0,yarray[i],280,yarray[i]);
+            }
+
+        }
+
+        public void updateGrid() {
+            Graphics g = this.getGraphics();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int i;
+                    for(i=0;i<100;i++) {
+                        try {
+                            bias = i*9;
+                            values.add((i*100)%200);
+                            repaint();
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }).start();
+        }
+    }
+
 }

@@ -11,7 +11,7 @@ import java.awt.*;
 public class MainActivity {
 
     public static ConsolePanel consolePanel;
-    public static JPanel infoPanel;
+    public static InfoPanel infoPanel;
     public static StatePanel statePanel;
 
     private static final int FRAME_WIDTH = 800;
@@ -48,9 +48,7 @@ public class MainActivity {
             statePanel.statePanelText.append(LogString.err(string));
         }
 
-        public static void data() {
-
-        }
+        public static void data(String string) { infoPanel.infoTextArea.setText(string); }
     }
     public static void main(String[] args) {
         MainActivity mainActivity = new MainActivity();

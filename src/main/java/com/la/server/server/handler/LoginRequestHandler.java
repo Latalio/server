@@ -8,9 +8,13 @@ import com.la.server.session.Session;
 import com.la.server.util.IDUtil;
 import com.la.server.util.SessionManager;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ChannelHandler.Sharable
 public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginRequestPacket> {
@@ -26,15 +30,28 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
             String userId = IDUtil.randomId();
             loginResponsePacket.setUserId(userId);
             loginResponsePacket.setUserName(loginRequestPacket.getUserName());
+            loginResponsePacket.setType(loginRequestPacket.getType());
             // loginResponsePacket.setReason(null);
             loginResponsePacket.setSuccess(true);
 
-            NettyServer.out.info("[" + loginRequestPacket.getUserName() + "]登录成功");
+            NettyServer.out.info("[" + loginRequestPacket.getUserName() + "] connected successfully.");
             SessionManager.bindSession(new Session(userId, loginRequestPacket.getUserName(), loginRequestPacket.getType()), ctx.channel());
 
             if (loginRequestPacket.getType().equals("Sensor")) {
                 SessionManager.sensorGroup.add(userId);
                 NettyServer.out.info("Sensor Group added " + loginRequestPacket.getUserName());
+
+                List<Channel> channelGroup = new ArrayList<>();
+
+                for (String receiverId : SessionManager.monitorGroup) {
+                    channelGroup.add(SessionManager.getChannel(receiverId));
+                }
+
+                for (Channel channel : channelGroup) {
+                    if (channel != null && SessionManager.hasLogin(channel)) {
+                        channel.writeAndFlush(loginResponsePacket);
+                    }
+                }
 
             } else if (loginRequestPacket.getType().equals("Monitor")) {
                 SessionManager.monitorGroup.add(userId);
@@ -44,7 +61,6 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
                 NettyServer.out.err("Login Type Error!");
             }
 
-            NettyServer.out.info("Should send an LoginInform");
         } else {
             loginResponsePacket.setReason("账号密码校验失败");
             loginResponsePacket.setSuccess(false);

@@ -97,19 +97,22 @@ public class ConsolePanel extends JPanel {
             this.dataSendButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    MainActivity.statePanel.statePanelText.append("Touched data send button");
+                    //MainActivity.statePanel.statePanelText.append("Touched data send button");
 
                     if (buttonTag.dataSend == 0) {
                         buttonTag.dataSend = 1;
+
+                        dataSend.setText("Data Transmission: On");
                         dataSendButton.setText("End");
+
                     } else if (buttonTag.dataSend == 1) {
                         buttonTag.dataSend = 0;
+
+                        dataSend.setText("Data Transmission: Off");
                         dataSendButton.setText("Start");
                     } else {
                         System.out.println(LogString.err("button tag setting error"));
                     }
-
-
                 }
             });
 
@@ -125,6 +128,24 @@ public class ConsolePanel extends JPanel {
             this.controlSendButton.setBounds(40, 125, 80, 20);
 
             this.controlSendButton.setBackground(NBSLStyle.COLOR.BUTTON_BACKGROUND);
+
+            this.controlSendButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    if(buttonTag.controlSend == 0) {
+                        buttonTag.controlSend = 1;
+
+                        controlSend.setText("Remote Control: On");
+                        controlSendButton.setText("Close");
+                    } else if (buttonTag.controlSend == 1) {
+                        buttonTag.controlSend = 0;
+
+                        controlSend.setText("Remote Control: Off");
+                        controlSendButton.setText("Open");
+                    }
+                }
+            });
             this.add(this.controlSendButton);
         }
     }

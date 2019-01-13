@@ -27,30 +27,36 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
         Session session = SessionManager.getSession(ctx.channel());
 
         // 2.通过消息发送方的会话信息构造要发送的消息
+        String senderId = session.getUserId();
+        String senderName = session.getUserName();
+        String senderType = session.getUserType();
+        String message = messageRequestPacket.getMessage();
+
         MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
-        messageResponsePacket.setFromUserId(session.getUserId());
-        messageResponsePacket.setFromUserName(session.getUserName());
-        messageResponsePacket.setMessage(messageRequestPacket.getMessage());
-        NettyServer.out.info("收到消息：" + messageRequestPacket.getMessage());
-        NettyServer.out.info("MessageResponsePacket have built.");
+        messageResponsePacket.setFromUserId(senderId);
+        messageResponsePacket.setFromUserName(senderName);
+        messageResponsePacket.setMessage(message);
+        NettyServer.out.info(
+                "[From]: " + senderType + "," + senderName +
+                        "[Message]: " + message);
 
 
         // 3.拿到消息接收方的 channel
-        if (session.getUserType() == "Sensor") {
-            for (String userId : SessionManager.sensorGroup) {
-                channelGroup.add(SessionManager.getChannel(userId));
-            }
-            NettyServer.out.info(String.format("Sensor group length: %d", channelGroup.size()));
-
-        } else if (session.getUserType() == "Monitor") {
+        if (senderType.equals("Sensor")) {
             for (String userId : SessionManager.monitorGroup) {
                 channelGroup.add(SessionManager.getChannel(userId));
             }
-            NettyServer.out.info(String.format("Monitor group length: %d", channelGroup.size()));
-        } else {
-            System.out.println("MessageRequestHandler error!");
-        }
+            //NettyServer.out.info(String.format("Sensor group length: %d", channelGroup.size()));
 
+        } else if (senderType.equals("Monitor")) {
+            for (String userId : SessionManager.sensorGroup) {
+                channelGroup.add(SessionManager.getChannel(userId));
+            }
+            //NettyServer.out.info(String.format("Monitor group length: %d", channelGroup.size()));
+        } else {
+            NettyServer.out.err("MessageRequestHandler error! session. usertype is " +
+                    senderType);
+        }
 
         // 4.将消息发送给消息接收方
         for (Channel channel : channelGroup) {
@@ -61,7 +67,6 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
                 });
             } else {
                 NettyServer.out.err("No client online.");
-
             }
         }
 

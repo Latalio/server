@@ -1,4 +1,4 @@
-package com.la.server.gui;
+package com.la.server.monitor.gui;
 
 import com.la.server.util.LogString;
 
@@ -25,8 +25,8 @@ public class ConsolePanel extends JPanel {
                 {"Device", "-"},
                 {"Status", "-"},
                 {"UUID", "-"},
-                {"登录时间", "-"},
-                {"在线时长", "-"}
+                {"Type", "-"},
+                {"Login Time", "-"}
         };
 
 

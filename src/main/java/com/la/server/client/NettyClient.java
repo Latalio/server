@@ -9,8 +9,8 @@ import com.la.server.client.handler.MessageResponseHandler;
 import com.la.server.codec.PacketDecoder;
 import com.la.server.codec.PacketEncoder;
 import com.la.server.codec.Splitter;
-import com.la.server.gui.ConsolePanel;
-import com.la.server.gui.MainActivity;
+import com.la.server.monitor.gui.ConsolePanel;
+import com.la.server.monitor.gui.MainActivity;
 import com.la.server.handler.IMIdleStateHandler;
 import com.la.server.util.LogString;
 import io.netty.bootstrap.Bootstrap;
@@ -39,7 +39,7 @@ public class NettyClient {
     public ConsolePanel.ButtonTag buttonTag;
 
 
-    public NettyClient(ConsolePanel.ButtonTag buttonTag) {
+    public NettyClient(MainActivity mainActivity) {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
         Bootstrap bootstrap = new Bootstrap();
@@ -56,7 +56,7 @@ public class NettyClient {
                         ch.pipeline().addLast(new Splitter());
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new LoginResponseHandler());
-                        ch.pipeline().addLast(new MessageResponseHandler());
+                        ch.pipeline().addLast(new MessageResponseHandler(mainActivity));
                         ch.pipeline().addLast(new PacketEncoder());
                         ch.pipeline().addLast(new HeartBeatTimerHandler());
 
@@ -65,7 +65,7 @@ public class NettyClient {
 
         connect(bootstrap, HOST, PORT, MAX_RETRY);
 
-        this.buttonTag = buttonTag;
+        this.buttonTag = mainActivity.consolePanel.buttonTag;
     }
 
     private void connect(Bootstrap bootstrap, String host, int port, int retry) {
@@ -98,6 +98,8 @@ public class NettyClient {
             @Override
             public void run() {
                 int lastDataSend = 0;
+                int lastContorlSend = 0;
+
                 while(true) {
                    try {
                        if ((lastDataSend == 0) && (buttonTag.dataSend == 1)) {
@@ -106,6 +108,14 @@ public class NettyClient {
                        } else if ((lastDataSend == 1) && (buttonTag.dataSend == 0)) {
                            lastDataSend = 0;
                            new UploadConsoleCommand().exec(channel, "End");
+                       }
+
+                       if ((lastContorlSend == 0) && (buttonTag.controlSend == 1)) {
+                           lastContorlSend = 1;
+                           new UploadConsoleCommand().exec(channel, "On");
+                       } else if ((lastContorlSend == 1) && (buttonTag.controlSend == 0)) {
+                           lastContorlSend = 0;
+                           new UploadConsoleCommand().exec(channel, "Off");
                        }
                        Thread.sleep(500);
                    } catch (Exception e){

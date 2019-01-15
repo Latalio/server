@@ -1,8 +1,8 @@
-package com.la.server.gui;
+package com.la.server.monitor.gui;
 
 
 import com.la.server.client.NettyClient;
-import com.la.server.gui.infoPanel.InfoPanel;
+import com.la.server.monitor.gui.infoPanel.InfoPanel;
 import com.la.server.util.LogString;
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ public class MainActivity {
     private static final int FRAME_HEIGHT = 500;
 
     private MainActivity() {
-        JFrame frame = new JFrame("MainActivity");
+        JFrame frame = new JFrame("Monitor");
         frame.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         frame.setResizable(false);
 
@@ -56,7 +56,7 @@ public class MainActivity {
         SwingWorker swingWorker = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                NettyClient nettyClient = new NettyClient(consolePanel.buttonTag);
+                NettyClient nettyClient = new NettyClient(mainActivity);
                 return null;
             }
         };

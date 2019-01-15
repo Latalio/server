@@ -1,4 +1,4 @@
-package com.la.server.gui;
+package com.la.server.monitor.gui;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,20 +1,18 @@
-package com.la.server.gui.infoPanel;
+package com.la.server.monitor.gui.infoPanel;
 
 
-import com.la.server.gui.NBSLStyle;
+import com.la.server.monitor.gui.NBSLStyle;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.ImageObserver;
-import java.text.AttributedCharacterIterator;
 import java.util.Vector;
 
 public class InfoPanel extends JPanel {
     private JLabel infoPanelTitle;
     public JTextArea infoTextArea;
-    private AxisPanel xAxisPanel;
-    private JPanel yAxisPanel;
-    private JPanel zAxisPanel;
+    public AxisPanel xAxisPanel;
+    public AxisPanel yAxisPanel;
+    public AxisPanel zAxisPanel;
 
     public InfoPanel() {
         InfoFormat infoFormat = new InfoFormat();
@@ -45,31 +43,31 @@ public class InfoPanel extends JPanel {
 
         this.xAxisPanel = new AxisPanel();
         this.xAxisPanel.setBounds(360, 30, 280, 100);
-        //this.xAxisPanel.setBackground(Color.BLUE);
-        this.xAxisPanel.updateGrid();
+        //this.xAxisPanel.setBorder(BorderFactory.createTitledBorder("x-Axis"));
+        //this.xAxisPanel.setBackground(NBSLStyle.COLOR.SENSOR_INFO_BACKGROUND);
         this.add(this.xAxisPanel);
 
-
-
-        this.yAxisPanel = new JPanel();
+        this.yAxisPanel = new AxisPanel();
         this.yAxisPanel.setBounds(360, 130, 280, 100);
-        this.yAxisPanel.setBackground(Color.CYAN);
+        this.yAxisPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+        //this.yAxisPanel.setBackground(NBSLStyle.COLOR.SENSOR_DATA_BACKGROUND);
         this.add(this.yAxisPanel);
 
-        this.zAxisPanel = new JPanel();
+        this.zAxisPanel = new AxisPanel();
         this.zAxisPanel.setBounds(360, 230, 280, 100);
-        this.zAxisPanel.setBackground(Color.GREEN);
+        this.zAxisPanel.setForeground(Color.BLUE);
+        //this.zAxisPanel.setBackground(NBSLStyle.COLOR.SENSOR_INFO_BACKGROUND);
         this.add(this.zAxisPanel);
 
     }
 
-    private class AxisPanel extends JPanel{
-        private int bias;
+    public class AxisPanel extends JPanel{
+        private int bias = 0;
         private Vector<Integer> values = new Vector<Integer>();
 
         public void paintComponent(Graphics g){
             super.paintComponent(g);
-            setBackground(Color.yellow); //背景色为黄色
+            setBackground(NBSLStyle.COLOR.SENSOR_GRAPH_BACKGROUND);
             drawGrid(g, bias);
 
         }
@@ -82,14 +80,12 @@ public class InfoPanel extends JPanel {
             Polygon p = new Polygon();
             p.addPoint(280-bias,100);
             for (i=0;i<values.size();i++) {
-                p.addPoint(280-bias+9*i,values.get(i));
+                p.addPoint(280-bias+9*i,values.get(i) + 50);
             }
-            p.addPoint(280, 100);
-            p.addPoint(280-bias,100);
-            g.setColor(Color.BLUE);
+            p.addPoint(280, 50);
+            p.addPoint(280-bias,50);
+            g.setColor(new Color(62,134,160));
             g.fillPolygon(p);
-
-
 
 
             for(i=0; i<xarray.length; i++) {
@@ -101,26 +97,14 @@ public class InfoPanel extends JPanel {
 
         }
 
-        public void updateGrid() {
-            Graphics g = this.getGraphics();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    int i;
-                    for(i=0;i<100;i++) {
-                        try {
-                            bias = i*9;
-                            values.add((i*100)%200);
-                            repaint();
-                            Thread.sleep(1000);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-            }).start();
+        public void updateGrid(float value) {
+            bias = bias + 9;
+            int tmp = (int) (value/10 * 50);
+            values.add(tmp);
+            repaint();
         }
     }
+
+
 
 }

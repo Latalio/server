@@ -8,7 +8,6 @@ public class UploadConsoleCommand {
 
     public void exec(Channel channel, String message) {
         channel.writeAndFlush(new MessageRequestPacket(message));
-        System.out.println("Message sent");
     }
 }
 

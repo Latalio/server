@@ -2,7 +2,7 @@ package com.la.server.client.handler;
 
 
 import com.la.server.client.NettyClient;
-import com.la.server.gui.MainActivity;
+import com.la.server.monitor.gui.MainActivity;
 import com.la.server.protocol.response.LoginResponsePacket;
 import com.la.server.session.Session;
 import com.la.server.util.SessionManager;
@@ -12,7 +12,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import javax.swing.table.DefaultTableModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Vector;
 
 public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginResponsePacket> {
 

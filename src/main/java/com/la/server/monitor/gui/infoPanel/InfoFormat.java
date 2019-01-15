@@ -1,4 +1,4 @@
-package com.la.server.gui.infoPanel;
+package com.la.server.monitor.gui.infoPanel;
 
 public class InfoFormat {
     public Accelerometer accelerometer = new Accelerometer();
@@ -6,15 +6,15 @@ public class InfoFormat {
 
 
     public class Accelerometer {
-        public float x = (float)0.1;
-        public float y = (float)0.01;
-        public float z = (float)0.001;
+        public float x = (float)0;
+        public float y = (float)0;
+        public float z = (float)0;
     }
 
     public class Magnetometer {
-        public float x = (float)0.0001;
-        public float y = (float)0.00001;
-        public float z = (float)0.000001;
+        public float x = (float)0;
+        public float y = (float)0;
+        public float z = (float)0;
     }
 
     public String out() {
